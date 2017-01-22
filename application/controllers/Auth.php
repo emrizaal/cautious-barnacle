@@ -18,22 +18,10 @@ class Auth extends MY_Controller {
 	public function auth(){
 		$p=$this->input->post();
 		$res=$this->m_auth->auth($p);
-		$error['error']=true;
 		if($res){
-			$data=array(
-				'id_mosque' => $res['id_mosque'],
-				'name' => $res['name'],
-				'kajian' => $res['kajian'],
-				'ustadz' => $res['ustadz'],
-				'ebook' => $res['ebook'],
-				'article' => $res['article'],
-				'slider' => $res['slider'],
-				'is_admin' => 0
-				);
-			$this->session->set_userdata($data);
-			redirect('dashboard');
+			print(json_encode(array('status'=>true,'data'=>$res)));
 		}else{
-			$this->load->view('login',$error);
+			print(json_encode(array('status'=>false)));
 		}
 	}
 

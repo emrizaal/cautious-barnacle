@@ -16,6 +16,11 @@ class Mosque extends MY_Controller {
 		$this->load->view('mosque',$data);
 	}
 
+	public function mosqueList(){
+		$data=$this->m_mosque->getAll($this->_table);
+		print(json_encode(array('collection'=>$data)));
+	}
+
 	public function getMosqueById($id){
 		$data=$this->m_mosque->getMosqueById($id);
 		print(json_encode($data));
@@ -51,7 +56,7 @@ class Mosque extends MY_Controller {
 		$config['max_width']     =   "1907";
 		$config['max_height']    =   "1280";
 		$this->load->library('upload',$config);
-		$pic=0;
+		$isUpload=0;
 
 		$p=$this->db->escape_str($this->input->post());
 		$mos=$this->m_mosque->getMosqueById($p['id_mosque']);
@@ -62,11 +67,11 @@ class Mosque extends MY_Controller {
 			$finfo=$this->upload->data();
 			$p['pic'] = $finfo['file_name'];
 			$pic=$this->m_mosque->getMosqueById($p['id_mosque']);
-			$pic=1;
+			$isUpload=1;
 		}
 		$res=$this->m_mosque->adminUpdate($this->_table,$p,'id_mosque');
 		if($res){
-			if($pic==1)unlink("assets/image/mosque/".$pic['pic']);
+			if($isUpload==1)unlink("assets/image/mosque/".$pic['pic']);
 			print(json_encode(array('status'=>true)));
 		}else{
 			print(json_encode(array('status'=>false)));
@@ -90,14 +95,14 @@ class Mosque extends MY_Controller {
 
 	public function savePassword(){
 		$p=$this->db->escape_str($this->input->post());
+		$mos=$this->m_mosque->getMosqueById($p['id_mosque']);
+		if($mos['token']!=$p['token'])die();
 		$res=$this->m_mosque->checkPassword($p);
 		if(empty($res)){
-			$data['info']="<div class='alert alert-danger'>Wrong Password</div>";
-			$this->load->view("change_password",$data);
+			print(json_encode(array('status'=>false)));
 		}else{
-			$this->m_mosque->savePassword($p);
-			$data['info']="<div class='alert alert-success'>Success</div>";
-			$this->load->view("change_password",$data);
+			$res2=$this->m_mosque->savePassword($p);
+			if($res2)print(json_encode(array('status'=>true)));
 		}
 
 	}

@@ -17,6 +17,22 @@ class Kajian extends MY_Controller {
 		$this->load->view('kajian',$data);
 	}
 
+	public function mostPopularKajianList(){
+		$data=$this->m_kajian->mostPopularKajianList();
+		print(json_encode(array('collection'=>$data)));
+	}
+
+	public function newestKajianList(){
+		$data=$this->m_kajian->newestKajianList();
+		print(json_encode(array('collection'=>$data)));
+	}
+
+	public function subscribedList($id){
+		$data=$this->m_kajian->subscribedList($id);
+		print_r($data);
+		//print(json_encode(array('collection'=>$data)));
+	}
+
 	public function getAllKajianByIdMosque($id){
 		$data=$this->m_kajian->getAllKajian($id);
 		print(json_encode(array('collection'=>$data)));
